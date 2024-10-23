@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import dynamic from "next/dynamic";
 import Image from "next/image";
+import confetti from "canvas-confetti";
 
 const DynamicWheel = dynamic(
   () => import("react-custom-roulette").then((mod) => mod.Wheel),
@@ -14,9 +15,10 @@ const DynamicWheel = dynamic(
 const DynamicFireworks = dynamic(() => import("@fireworks-js/react"), {
   ssr: false,
 });
-const DynamicConfetti = dynamic(() => import("canvas-confetti"), {
-  ssr: false,
-});
+const DynamicConfetti = dynamic(
+  () => import("canvas-confetti").then((mod) => mod.default),
+  { ssr: false },
+);
 
 const data = [
   {
@@ -153,17 +155,33 @@ export default function EnhancedSpinWheel() {
     }
   };
 
+  const playSound = (soundFile: string) => {
+    if (typeof window !== "undefined") {
+      const audio = new Audio(soundFile);
+      audio
+        .play()
+        .catch((error) => console.error("Error playing sound:", error));
+    }
+  };
+
   const handleStopSpinning = () => {
     setMustSpin(false);
     setIsSpinning(false);
     const newOffer = data[prizeNumber].option;
     setOffer(newOffer);
     if (newOffer !== "Try Again" && isMounted) {
-      DynamicConfetti({
-        particleCount: 100,
-        spread: 70,
-        origin: { y: 0.6 },
-      });
+      // Play sounds
+      playSound("/cracker-sound.wav");
+      playSound("/confetti-sound.wav");
+
+      // Trigger confetti
+      if (typeof DynamicConfetti === "function") {
+        confetti({
+          particleCount: 100,
+          spread: 70,
+          origin: { y: 0.6 },
+        });
+      }
       setStep(3);
     } else {
       setStep(4);
@@ -208,7 +226,7 @@ export default function EnhancedSpinWheel() {
       {/* Banner */}
       <div className="w-full text-white relative">
         <Image
-          src="/banner.png"
+          src="/BENNER 3.png"
           alt="Deepavali Spin the Wheel Banner"
           width={1920}
           height={200}
@@ -385,7 +403,7 @@ export default function EnhancedSpinWheel() {
                   className="w-full bg-blue-600 hover:bg-blue-700 text-white text-sm sm:text-base"
                   disabled={isSubmitting}
                 >
-                  {isSubmitting ? "Submitting..." : "Claim Your Offer"}
+                  {isSubmitting ? "Submitting..." : "Claim Your  Offer"}
                 </Button>
                 {submitError && (
                   <p className="text-red-500 mt-2 text-sm sm:text-base">
