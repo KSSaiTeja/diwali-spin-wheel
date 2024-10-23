@@ -9,6 +9,7 @@ import confetti from "canvas-confetti";
 import Fireworks from "@fireworks-js/react";
 import useSound from "use-sound";
 
+/* eslint-disable @typescript-eslint/no-unused-vars */
 const data = [
   {
     option: "10% Off",
@@ -173,15 +174,12 @@ export default function EnhancedSpinWheel() {
             max: 100,
           },
           lineWidth: {
-            explosion: [1, 2],
-            trace: [1, 1.5],
+            explosion: { min: 1, max: 2 },
+            trace: { min: 1, max: 1.5 },
           },
           lineStyle: "round",
           flickering: 30,
-          explosions: {
-            min: 1,
-            max: 3,
-          },
+          explosion: 3,
           hue: {
             min: 0,
             max: 360,
