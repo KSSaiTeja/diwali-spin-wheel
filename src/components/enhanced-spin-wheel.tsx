@@ -69,7 +69,7 @@ const getOfferMessage = (offer: string) => {
 };
 
 const GOOGLE_FORM_ACTION_URL =
-  "https://docs.google.com/forms/d/e/1FAIpQLSeeHgX3-7eXbLu45i0MCLXjPZsY1eBVUSYk732bJrrWyTBcEw/formResponse";
+  "https://docs.google.com/forms/d/e/1FAIpQLSeeHgX3-7eXbLu45i0MCLXjPZsY1eBVUSYk732bJrrWyTBcEw/formResponse"; // Updated Google Form URL
 
 export default function EnhancedSpinWheel() {
   const [step, setStep] = useState(2);
@@ -78,7 +78,6 @@ export default function EnhancedSpinWheel() {
   const [email, setEmail] = useState("");
   const [mustSpin, setMustSpin] = useState(false);
   const [prizeNumber, setPrizeNumber] = useState(0);
-  const [offer, setOffer] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState("");
   const [wheelClassName, setWheelClassName] = useState("animate-wheel-jerk");
@@ -86,9 +85,19 @@ export default function EnhancedSpinWheel() {
   const [phoneError, setPhoneError] = useState("");
   const [isSpinning, setIsSpinning] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
+  const [currentOffer, setCurrentOffer] = useState("");
 
   useEffect(() => {
     setIsMounted(true);
+    if (typeof window !== "undefined") {
+      const savedOffer = localStorage.getItem("currentOffer");
+      const savedPhoneNumber = localStorage.getItem("currentPhoneNumber");
+      if (savedOffer && savedPhoneNumber) {
+        setCurrentOffer(savedOffer);
+        setPhoneNumber(savedPhoneNumber);
+        setStep(3);
+      }
+    }
   }, []);
 
   const checkIfPlayed = useCallback((number: string) => {
@@ -97,7 +106,8 @@ export default function EnhancedSpinWheel() {
         const playedUsers = JSON.parse(
           localStorage.getItem("playedUsers") || "{}",
         );
-        return !!playedUsers[number];
+        const currentPhoneNumber = localStorage.getItem("currentPhoneNumber");
+        return !!playedUsers[number] || number === currentPhoneNumber;
       } catch (error) {
         console.error("Error checking played status:", error);
       }
@@ -114,8 +124,14 @@ export default function EnhancedSpinWheel() {
   const handleSubmitPhone = (e: React.FormEvent) => {
     e.preventDefault();
     if (!phoneError && phoneNumber.length >= 10 && !hasPlayed) {
-      setIsSpinning(true);
-      handleSpinClick();
+      const savedOffer = localStorage.getItem("currentOffer");
+      if (savedOffer) {
+        setCurrentOffer(savedOffer);
+        setStep(3);
+      } else {
+        setIsSpinning(true);
+        handleSpinClick();
+      }
     }
   };
 
@@ -168,7 +184,13 @@ export default function EnhancedSpinWheel() {
     setMustSpin(false);
     setIsSpinning(false);
     const newOffer = data[prizeNumber].option;
-    setOffer(newOffer);
+    setCurrentOffer(newOffer);
+    const uniqueId = Date.now().toString(); // Generate a unique identifier
+    if (typeof window !== "undefined") {
+      localStorage.setItem("currentOffer", newOffer);
+      localStorage.setItem("currentPhoneNumber", phoneNumber);
+      localStorage.setItem("uniqueId", uniqueId); // Store the unique identifier
+    }
     if (newOffer !== "Try Again" && isMounted) {
       // Play sounds
       playSound("/cracker-sound.wav");
@@ -182,9 +204,34 @@ export default function EnhancedSpinWheel() {
           origin: { y: 0.6 },
         });
       }
+
+      // Send initial data to Google Form
+      sendToGoogleForm({
+        "entry.1861090374": phoneNumber, // Assuming this is the phone number field
+        "entry.875710030": newOffer,
+        "entry.1128347265": uniqueId,
+      });
+
       setStep(3);
     } else {
       setStep(4);
+    } 
+  };
+
+  const sendToGoogleForm = async (data: Record<string, string>) => {
+    const formData = new FormData();
+    Object.entries(data).forEach(([key, value]) => {
+      formData.append(key, value);
+    });
+
+    try {
+      await fetch(GOOGLE_FORM_ACTION_URL, {
+        method: "POST",
+        body: formData,
+        mode: "no-cors",
+      });
+    } catch (error) {
+      console.error("Error sending data to Google Form:", error);
     }
   };
 
@@ -193,24 +240,26 @@ export default function EnhancedSpinWheel() {
     setIsSubmitting(true);
     setSubmitError("");
 
+    const uniqueId = localStorage.getItem("uniqueId");
+
     const formData = new FormData();
     formData.append("entry.1861090374", phoneNumber);
+    formData.append("entry.875710030", currentOffer);
     formData.append("entry.975279933", name);
     formData.append("entry.1286515812", email);
-    formData.append("entry.875710030", offer);
+    formData.append("entry.1128347265", uniqueId || "");
 
     try {
-      await fetch(GOOGLE_FORM_ACTION_URL, {
-        method: "POST",
-        body: formData,
-        mode: "no-cors",
-      });
+      await sendToGoogleForm(Object.fromEntries(formData));
       if (typeof window !== "undefined") {
         const playedUsers = JSON.parse(
           localStorage.getItem("playedUsers") || "{}",
         );
         playedUsers[phoneNumber] = true;
         localStorage.setItem("playedUsers", JSON.stringify(playedUsers));
+        localStorage.removeItem("currentOffer");
+        localStorage.removeItem("currentPhoneNumber");
+        localStorage.removeItem("uniqueId");
       }
       setStep(5);
     } catch (error) {
@@ -226,11 +275,11 @@ export default function EnhancedSpinWheel() {
       {/* Banner */}
       <div className="w-full text-white relative">
         <Image
-          src="/BENNER 3.png"
+          src="/banner.png"
           alt="Deepavali Spin the Wheel Banner"
           width={1920}
-          height={200}
-          className="w-full h-auto object-cover"
+          height={300}
+          className="w-full h-[300px] object-cover"
         />
       </div>
 
@@ -370,16 +419,17 @@ export default function EnhancedSpinWheel() {
               </Button>
             </form>
           )}
+
           {step === 3 && (
             <div className="text-center md:text-left">
               <h3 className="text-xl sm:text-2xl font-bold mb-4 text-white">
                 Congratulations!
               </h3>
               <p className="text-2xl sm:text-3xl font-bold text-white mb-4">
-                {offer}
+                {currentOffer}
               </p>
               <p className="mb-6 text-sm sm:text-base text-white">
-                {getOfferMessage(offer)}
+                {getOfferMessage(currentOffer)}
               </p>
               <form onSubmit={handleSubmitDetails} className="space-y-4">
                 <Input
@@ -403,7 +453,7 @@ export default function EnhancedSpinWheel() {
                   className="w-full bg-blue-600 hover:bg-blue-700 text-white text-sm sm:text-base"
                   disabled={isSubmitting}
                 >
-                  {isSubmitting ? "Submitting..." : "Claim Your  Offer"}
+                  {isSubmitting ? "Submitting..." : "Claim Your Offer"}
                 </Button>
                 {submitError && (
                   <p className="text-red-500 mt-2 text-sm sm:text-base">
