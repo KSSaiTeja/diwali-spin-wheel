@@ -132,6 +132,7 @@ export default function EnhancedSpinWheel() {
       const savedOffer = localStorage.getItem("currentOffer");
       const savedPhoneNumber = localStorage.getItem("currentPhoneNumber");
       const savedUniqueId = localStorage.getItem("uniqueId");
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const savedSpinCount = localStorage.getItem("spinCount");
       const savedRemainingChances = localStorage.getItem("remainingChances");
       if (savedOffer && savedPhoneNumber && savedUniqueId) {

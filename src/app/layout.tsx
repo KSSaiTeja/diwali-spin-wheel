@@ -15,7 +15,7 @@ const geistMono = localFont({
 
 export const metadata: Metadata = {
   title: "Diwali Fortune Wheel",
-  description: "created by savart",
+  description: "Created by Savart",
 };
 
 export default function RootLayout({
