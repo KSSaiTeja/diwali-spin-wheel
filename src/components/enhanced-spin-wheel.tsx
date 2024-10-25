@@ -7,7 +7,6 @@ import { Label } from "@/components/ui/label";
 import dynamic from "next/dynamic";
 import Image from "next/image";
 import confetti from "canvas-confetti";
-import SEO from "./seo";
 
 const DynamicWheel = dynamic(
   () => import("react-custom-roulette").then((mod) => mod.Wheel),
@@ -110,12 +109,6 @@ const sendToGoogleForm = async (data: Record<string, string>) => {
 };
 
 export default function EnhancedSpinWheel() {
-  <SEO
-    title="Diwali Fortune Wheel"
-    description="Welcome to the Diwali Fortune Wheel! Spin for exciting prizes and enjoy the festive season with great rewards. Perfectly optimized for sharing and celebrating"
-    image="/newbanner.png"
-  />;
-
   const [step, setStep] = useState(2);
   const [phoneNumber, setPhoneNumber] = useState("");
   const [name, setName] = useState("");
@@ -316,7 +309,7 @@ export default function EnhancedSpinWheel() {
       <div className="w-full text-white relative">
         <div className="relative w-full" style={{ aspectRatio: "1920/250" }}>
           <Image
-            src="/newbanner.png"
+            src="/banner.svg"
             alt="Deepavali Spin the Wheel Banner"
             layout="fill"
             objectFit="cover"
