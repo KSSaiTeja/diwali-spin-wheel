@@ -7,6 +7,8 @@ import { Label } from "@/components/ui/label";
 import dynamic from "next/dynamic";
 import Image from "next/image";
 import confetti from "canvas-confetti";
+import Link from "next/link";
+import { ChevronLeft } from "lucide-react";
 
 const DynamicWheel = dynamic(
   () => import("react-custom-roulette").then((mod) => mod.Wheel),
@@ -306,10 +308,23 @@ export default function EnhancedSpinWheel() {
 
   return (
     <div className="min-h-screen w-full bg-gradient-to-b from-gray-900 via-gray-800 to-gray-700 flex flex-col items-center justify-start relative overflow-hidden">
-      <div className="w-full text-white relative">
-        <div className="relative w-full" style={{ aspectRatio: "1920/250" }}>
+      <div className="w-full bg-gray-900 py-2 px-4 flex justify-start mt-4">
+        <Link href="https://savart.com" passHref>
+          <Button
+            variant="outline"
+            size="sm"
+            className="bg-[#101827] text-white border-[#314d81] hover:bg-[#314d81] hover:border-[#101827] hover:text-white transition-colors duration-300 flex items-center gap-2"
+          >
+            <ChevronLeft className="w-4 h-4" />
+            Back to Home
+          </Button>
+        </Link>
+      </div>
+
+      <div className="w-full text-white relative mt-4">
+        <div className="relative w-full" style={{ aspectRatio: "1920/450" }}>
           <Image
-            src="/banner.svg"
+            src="/newbanner.svg"
             alt="Deepavali Spin the Wheel Banner"
             layout="fill"
             objectFit="cover"
