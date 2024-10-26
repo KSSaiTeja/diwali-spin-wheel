@@ -53,12 +53,20 @@
   //   ...Array(14).fill(4), // Creates 14 occurrences of 4
   // ];
 
+  // const probabilityDistribution = [
+  //   ...Array(1).fill(0),   // Creates 1 occurrence of 0 (₹1 offer - very very rare)
+  //   ...Array(45).fill(1),  // Creates 45 occurrences of 1 (₹500 off - highest chance)
+  //   ...Array(10).fill(2),  // Creates 10 occurrences of 2 (₹2500 off - 3rd most common)
+  //   ...Array(30).fill(3),  // Creates 30 occurrences of 3 (₹1000 off - 2nd most common)
+  //   ...Array(14).fill(4),  // Creates 14 occurrences of 4 (Try Again - 4th most common)
+  // ];
+
   const probabilityDistribution = [
-    ...Array(1).fill(0),   // Creates 1 occurrence of 0 (₹1 offer - very very rare)
-    ...Array(45).fill(1),  // Creates 45 occurrences of 1 (₹500 off - highest chance)
-    ...Array(10).fill(2),  // Creates 10 occurrences of 2 (₹2500 off - 3rd most common)
-    ...Array(30).fill(3),  // Creates 30 occurrences of 3 (₹1000 off - 2nd most common)
-    ...Array(14).fill(4),  // Creates 14 occurrences of 4 (Try Again - 4th most common)
+    ...Array(1).fill(0),    // Creates 1 occurrence of 0 (₹1 offer - extremely rare)
+    ...Array(454).fill(1),  // Creates 454 occurrences of 1 (₹500 off - highest chance)
+    ...Array(100).fill(2),  // Creates 100 occurrences of 2 (₹2500 off - 3rd most common)
+    ...Array(300).fill(3),  // Creates 300 occurrences of 3 (₹1000 off - 2nd most common)
+    ...Array(145).fill(4),  // Creates 145 occurrences of 4 (Try Again - 4th most common)
   ];
 
   const getOfferDetails = (offer: string) => {
