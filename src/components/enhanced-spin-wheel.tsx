@@ -54,11 +54,11 @@
   // ];
 
   const probabilityDistribution = [
-    ...Array(1).fill(0),   // Creates 1 occurrence of 0 (₹1 offer)
-    ...Array(40).fill(1),  // Creates 40 occurrences of 1 (₹500 off)
-    ...Array(5).fill(2),   // Creates 5 occurrences of 2 (₹2500 off)
-    ...Array(35).fill(3),  // Creates 35 occurrences of 3 (₹1000 off)
-    ...Array(19).fill(4),  // Creates 19 occurrences of 4 (Try Again)
+    ...Array(1).fill(0),   // Creates 1 occurrence of 0 (₹1 offer - very very rare)
+    ...Array(45).fill(1),  // Creates 45 occurrences of 1 (₹500 off - highest chance)
+    ...Array(10).fill(2),  // Creates 10 occurrences of 2 (₹2500 off - 3rd most common)
+    ...Array(30).fill(3),  // Creates 30 occurrences of 3 (₹1000 off - 2nd most common)
+    ...Array(14).fill(4),  // Creates 14 occurrences of 4 (Try Again - 4th most common)
   ];
 
   const getOfferDetails = (offer: string) => {
